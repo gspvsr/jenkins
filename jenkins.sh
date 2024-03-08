@@ -11,11 +11,12 @@ LOGFILE="/tmp/$0-$TIMESTAMP.log"
 printf "Script started executing at %s\n" "$TIMESTAMP" &>> "$LOGFILE"
 
 VALIDATE(){
-    if [ "$1" -ne 0 ]; then
-        printf "%s...%s FAILED %s\n" "$2" "$R" "$N"
+    if [ $1 -ne 0 ]
+    then 
+        echo "$2...FAILED"
         exit 1
-    else
-        printf "%s....%s SUCCESS %s\n" "$2" "$G" "$N"
+    else 
+        echo "$2....SUCCESS"
     fi
 }
 
@@ -26,19 +27,19 @@ else
     printf "You are root user\n"
 fi
 
-sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo &>> "$LOGFILE"
+wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo &>> "$LOGFILE"
 VALIDATE $? "Downloading the Jenkins file"
 
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key &>> "$LOGFILE"
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key &>> "$LOGFILE"
 VALIDATE $? "Stable key downloading"
 
-sudo yum install fontconfig java-17-openjdk -y &>> "$LOGFILE"
+yum install fontconfig java-17-openjdk -y &>> "$LOGFILE"
 VALIDATE $? "Installing Java 17"
 
-sudo yum install jenkins -y &>> "$LOGFILE"
+yum install jenkins -y &>> "$LOGFILE"
 VALIDATE $? "Installing Jenkins"
 
-sudo systemctl enable jenkins &>> "$LOGFILE"
+systemctl enable jenkins &>> "$LOGFILE"
 VALIDATE $? "Enabling Jenkins"
 
 systemctl start jenkins &>> "$LOGFILE"

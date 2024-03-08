@@ -1,6 +1,4 @@
-
-# STEP1: CREATING A SECURITY GROUP FOR JENKINS SERVER
-# Description: Allow SSH, HTTP, HTTPS, 8080, 8081
+# Step 1: Creating a security group for Jenkins server
 resource "aws_security_group" "my_security_group1" {
   name        = "my-security-group1"
   description = "Allow SSH, HTTP, HTTPS, 8080 for Jenkins & Maven"
@@ -50,14 +48,12 @@ resource "aws_security_group" "my_security_group1" {
   }
 }
 
-# STEP2: CREATE AN JENKINS EC2 INSTANCE USING EXISTING PEM KEY
-# Note: i. First create a pem-key manually from the AWS console
-#      ii. Copy it in the same directory as your terraform code
+# Step 2: Create a Jenkins EC2 instance using an existing PEM key
 resource "aws_instance" "my_ec2_instance1" {
   ami                    = "ami-0f3c7d07486cad139"
   instance_type          = "t2.medium"
   vpc_security_group_ids = [aws_security_group.my_security_group1.id]
-  #key_name               = "My_Key" # paste your key-name here, do not use extension '.pem'
+  user_data = file("jenkins.sh")
 
   # Consider EBS volume 30GB
   root_block_device {
@@ -68,23 +64,24 @@ resource "aws_instance" "my_ec2_instance1" {
   tags = {
     Name = "Jenkins"
   }
-
-  user_data = file("jenkins.sh")
-
 }
 
-
-# STEP3: OUTPUT PUBLIC IP OF EC2 INSTANCE
+# Step 3: Output public IP of EC2 instance
 output "ACCESS_YOUR_JENKINS_HERE" {
   value = "http://${aws_instance.my_ec2_instance1.public_ip}:8080"
 }
 
-# STEP4: OUTPUT PUBLIC IP OF EC2 INSTANCE
+# Step 4: Output public IP of EC2 instance
 output "MASTER_SERVER_PUBLIC_IP" {
   value = aws_instance.my_ec2_instance1.public_ip
 }
 
-# STEP5: OUTPUT PRIVATE IP OF EC2 INSTANCE
+# Step 5: Output private IP of EC2 instance
 output "MASTER_SERVER_PRIVATE_IP" {
   value = aws_instance.my_ec2_instance1.private_ip
 }
+
+output "Jenkins_Initial_Password" {
+  value = "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+}
+
