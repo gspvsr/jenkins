@@ -11,15 +11,15 @@ LOGFILE="/tmp/$0-$TIMESTAMP.log"
 printf "Script started executing at %s\n" "$TIMESTAMP" &>> "$LOGFILE"
 
 VALIDATE(){
-    if [ $1 -ne 0 ]
-    then 
-        echo "$2...FAILED"
+    if [ $1 -ne 0 ];
+    then
+        echo -e "$2 ... $R FAILURE $N"
         exit 1
-    else 
-        echo "$2....SUCCESS"
+    else
+        echo -e "$2 ... $G SUCCESS $N"
+        
     fi
 }
-
 if [ "$(id -u)" -ne 0 ]; then
     printf "ERROR :: Please install with Root Access\n"
     exit 1
